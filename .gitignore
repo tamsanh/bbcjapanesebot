@@ -1,3 +1,7 @@
+# Authentication and data
+already_done.pkl
+credentials.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
