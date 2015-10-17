@@ -4,31 +4,35 @@ import html2text
 
 import article
 
-page = requests.get(article.link)
-tree = html.fromstring(page.text)
-content = tree.cssselect('div.story-body > div.story-body__inner')[0]
+def reload():
+    global text
 
-htmlcode = html.tostring(content)
+    article.reload()
+    page = requests.get(article.link)
+    tree = html.fromstring(page.text)
+    content = tree.cssselect('div.story-body > div.story-body__inner')[0]
 
-h = html2text.HTML2Text()
-h.ignore_links = True
-h.ignore_images = True
+    htmlcode = html.tostring(content)
 
-text = h.handle(str(htmlcode))
+    h = html2text.HTML2Text()
+    h.ignore_links = True
+    h.ignore_images = True
 
-# begin kludge
-text = text.replace('\\n', '')  # remove literal "\n"
-text = text.replace('\n\n','\\n')  # double newline -> literal "\n"
-text = text.replace('\n', '')  # remove newlines
-text = text.replace('\\n', '\n')  # convert literal "\n" back to newline
-text = text.replace("\\'", "'")  # fix apostrophes
-# end kludge
+    text = h.handle(str(htmlcode))
 
-# assume unimportant or image caption if less than 100 chars
-splittext = text.split('\n')
-text = []
-for line in splittext:
-    if len(line) > 100:
-        text.append(line)
+    # begin kludge
+    text = text.replace('\\n', '')  # remove literal "\n"
+    text = text.replace('\n\n','\\n')  # double newline -> literal "\n"
+    text = text.replace('\n', '')  # remove newlines
+    text = text.replace('\\n', '\n')  # convert literal "\n" back to newline
+    text = text.replace("\\'", "'")  # fix apostrophes
+    # end kludge
 
-text = '\n\n'.join(text)
+    # assume unimportant or image caption if less than 100 chars
+    splittext = text.split('\n')
+    text = []
+    for line in splittext:
+        if len(line) > 100:
+            text.append(line)
+
+    text = '\n\n'.join(text)
