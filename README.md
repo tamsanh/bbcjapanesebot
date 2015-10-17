@@ -14,3 +14,4 @@ Dependencies
     * lxml
         * cssselect
     * html2text
+    * PRAW
