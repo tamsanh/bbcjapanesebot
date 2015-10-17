@@ -15,6 +15,20 @@ h.ignore_links = True
 h.ignore_images = True
 
 text = h.handle(str(htmlcode))
-text = text[2:-3].replace('\n','').replace('\\n','\n')
 
-print(text)
+# begin kludge
+text = text.replace('\\n', '')  # remove literal "\n"
+text = text.replace('\n\n','\\n')  # double newline -> literal "\n"
+text = text.replace('\n', '')  # remove newlines
+text = text.replace('\\n', '\n')  # convert literal "\n" back to newline
+text = text.replace("\\'", "'")  # fix apostrophes
+# end kludge
+
+# assume unimportant or image caption if less than 100 chars
+splittext = text.split('\n')
+text = []
+for line in splittext:
+    if len(line) > 100:
+        text.append(line)
+
+text = '\n\n'.join(text)
